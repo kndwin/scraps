@@ -1,16 +1,18 @@
 import express from 'express';
-import totalJobs from './api/index'
+import { getJobs } from './api/index'
+
 const app = express()
 const port = 3000
 
-app.get('/', (req, res) => {
+app.get('/', (_, res) => {
   res.send('hey!')
 })
 
-app.get('/jobs', (req, res) => {
-  res.json(totalJobs)
+app.get('/jobs', async (_, res) => {
+  const jobs = await getJobs();
+  res.json(jobs)
 })
 
 app.listen(port, () => {
-  console.log(`Listening on http://localhost${port}`)
+  console.log(`Listening on http://localhost:${port}`)
 })
