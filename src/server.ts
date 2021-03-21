@@ -16,8 +16,10 @@ app.get('/', (_, res) => {
 })
 
 app.get('/jobs', async (_, res) => {
-	client.get("cachedJobs", async (err, jobs) => {
-		if (err) throw err;
+	client.get("cachedJobs", async (error, jobs) => {
+		if (error) {
+			throw error;
+		}
 		if (jobs) {
 			res.json(JSON.parse(jobs))
 		}
@@ -27,7 +29,7 @@ app.get('/jobs', async (_, res) => {
 app.get('/update', async (_, res) => {
 	res.send(`manually triggering the update`)
   const jobs = await getJobs();
-	client.set("cachedJobs", JSON.stringify(jobs), redis.print)
+	client.set("cachedJobs", JSON.stringify(jobs))
 }) 
 
 app.get('/connect', async (_, res) => {

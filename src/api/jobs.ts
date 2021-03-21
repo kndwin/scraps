@@ -57,6 +57,9 @@ async function getJobsFromSource ({
   source: string
   selectors: Selectors
 }) : Promise<Jobs[]> {
+
+	console.log(`loading jobs for ${source}`)
+
   const totalJobs : Jobs[] = [];
 
   const browser = await puppeteer.launch({
@@ -69,7 +72,7 @@ async function getJobsFromSource ({
 
   for (let pages = 0; pages < 2; pages++) {
     await page.goto(selectors.url(pages));
-    await page.waitForSelector(selectors.page);
+    await page.waitForSelector(selectors.page, {timeout: 0});
 
     let titles = await page.$$eval(selectors.title, (allTitle) => {
       return allTitle.map(i => (<HTMLElement>i).innerText)
@@ -103,6 +106,6 @@ async function getJobsFromSource ({
   }
 
   await browser.close()
-  console.log(totalJobs.length)
+  console.log(`${source} - ${totalJobs.length} jobs added`)
   return totalJobs
 }
