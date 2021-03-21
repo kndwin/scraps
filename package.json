@@ -10,8 +10,12 @@
 	},
   "scripts": {
     "dev": "nodemon index.ts",
+<<<<<<< HEAD
     "build": "tsc",
 		"start": "node build/index.js"
+=======
+    "build": "tsc --project ./"
+>>>>>>> parent of d99b9b6 (🔨 fixed package.json to allow deployment to heroku)
   },
   "dependencies": {
     "express": "^4.17.1",
