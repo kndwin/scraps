@@ -1,5 +1,5 @@
 import express from 'express';
-import { getJobs } from './api/index'
+import { getJobs } from './api'
 
 const app = express()
 const port = 3000
