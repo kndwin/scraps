@@ -59,7 +59,12 @@ async function getJobsFromSource ({
 }) : Promise<Jobs[]> {
   const totalJobs : Jobs[] = [];
 
-  const browser = await puppeteer.launch();
+  const browser = await puppeteer.launch({
+		'args' : [
+			'--no-sandbox',
+			'--disable-setuid-sandbox'
+		]
+	});
   const page = await browser.newPage();
 
   for (let pages = 0; pages < 2; pages++) {
