@@ -65,12 +65,14 @@ async function getJobsFromSource ({
   const browser = await puppeteer.launch({
 		'args' : [
 			'--no-sandbox',
-			'--disable-setuid-sandbox'
+			'--disable-setuid-sandbox',
+			'--disable-dev-shm-usage',
+			'--single-process'
 		]
 	});
   const page = await browser.newPage();
 
-  for (let pages = 0; pages < 2; pages++) {
+  for (let pages = 0; pages < 15; pages++) {
     await page.goto(selectors.url(pages));
     await page.waitForSelector(selectors.page, {timeout: 0});
 
@@ -103,9 +105,10 @@ async function getJobsFromSource ({
       })
     }
     totalJobs.push(...jobs)
+		console.log(`	${jobs.length} jobs added for page ${pages}`)
   }
 
   await browser.close()
-  console.log(`${source} - ${totalJobs.length} jobs added`)
+  console.log(`Total jobs: ${totalJobs.length} jobs added\n`)
   return totalJobs
 }
