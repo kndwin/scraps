@@ -2,7 +2,7 @@ import express from 'express';
 import { getJobs } from './api'
 
 const app = express()
-const port = 3000
+const port = process.env.PORT || 3000
 
 app.get('/', (_, res) => {
   res.send('hey!')
@@ -14,5 +14,5 @@ app.get('/jobs', async (_, res) => {
 })
 
 app.listen(port, () => {
-  console.log(`Listening on http://localhost:${port}`)
+	console.log(`Node is listening on port ${port}`)
 })
