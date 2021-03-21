@@ -3,8 +3,8 @@ import dotenv from 'dotenv'
 import redis from 'redis'
 import "reflect-metadata"
 
-import { getJobs } from 'api'
-import { dbConnection } from 'db/lib/connect'
+import { getJobs } from './api'
+import { dbConnection } from './db/lib/connect'
 
 dotenv.config()
 const app : express.Application = express()
