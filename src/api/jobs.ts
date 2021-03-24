@@ -104,11 +104,13 @@ async function getJobsFromSource ({
         'source': source
       })
     }
+
 		if (jobs.length == 1) {
 			break
 		} else {
 			totalJobs.push(...jobs)
 		}
+
 		console.log(`- ${jobs.length} jobs added for page ${pages}`)
   }
 

@@ -1,6 +1,7 @@
 import express from 'express'
 import dotenv from 'dotenv'
 import redis from 'redis'
+import cors from 'cors'
 import "reflect-metadata"
 
 import { getJobs } from './api'
@@ -11,6 +12,7 @@ const app : express.Application = express()
 const port = process.env.PORT || 3000
 const client = redis.createClient(process.env.REDIS_URL)
 
+app.use(cors({origin: "*"}))
 app.get('/', (_, res) => {
   res.send('Testing my API!')
 })
