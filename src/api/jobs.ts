@@ -58,7 +58,7 @@ async function getJobsFromSource ({
   selectors: Selectors
 }) : Promise<Jobs[]> {
 
-	console.log(`loading jobs for ${source}`)
+	console.log(`Loading jobs for ${source}`)
 
   const totalJobs : Jobs[] = [];
 
@@ -104,8 +104,12 @@ async function getJobsFromSource ({
         'source': source
       })
     }
-    totalJobs.push(...jobs)
-		console.log(`	${jobs.length} jobs added for page ${pages}`)
+		if (jobs.length == 1) {
+			break
+		} else {
+			totalJobs.push(...jobs)
+		}
+		console.log(`- ${jobs.length} jobs added for page ${pages}`)
   }
 
   await browser.close()
