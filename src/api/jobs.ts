@@ -6,6 +6,7 @@ export interface Jobs {
   timePosted: string
   link: string
   source: string
+	descriptionHTML: string
 }
 
 interface Selectors {
@@ -15,6 +16,7 @@ interface Selectors {
   company: string
   timePosted: string
   link: string
+	descriptionHTML: string
 }
 
 export default async function getJobs () : Promise<Jobs[]> {
@@ -29,6 +31,7 @@ export default async function getJobs () : Promise<Jobs[]> {
       company: '.jobsearch-SerpJobCard .company',
       timePosted: '.jobsearch-SerpJobCard .date',
       link: '.jobsearch-SerpJobCard > h2 > a',
+			descriptionHTML: '.jobsearch-jobDescriptionText'
     }
   })
 
@@ -43,6 +46,8 @@ export default async function getJobs () : Promise<Jobs[]> {
       company: 'html > body > #app > div > div > div > div > section > div  > div > div > div > div > div > div > div > div > article > span > span > *:nth-child(2)', 
       timePosted: 'html > body > #app > div > div > div > div > section > div  > div > div > div > div > div > div > div > div > article > span > span > span',
       link: 'html > body > #app > div > div > div > div > section > div  > div > div > div > div > div > div > div > div > article > span > span > h1 > a',
+			descriptionHTML: 'div[data-automation="jobDescription"]>span>div>div>div>p,br'
+			
     }
   })
 	
@@ -72,8 +77,9 @@ async function getJobsFromSource ({
 	});
   const page = await browser.newPage();
 
-  for (let pages = 0; pages < 15; pages++) {
+  for (let pages = 0; pages < 1; pages++) {
     await page.goto(selectors.url(pages));
+		// await page.waitForNavigation()
     await page.waitForSelector(selectors.page, {timeout: 0});
 
     let titles = await page.$$eval(selectors.title, (allTitle) => {
@@ -91,7 +97,29 @@ async function getJobsFromSource ({
     let links = await page.$$eval(selectors.link, (allLinks) => {
       return allLinks.map(i => (<HTMLAnchorElement>i).href)
     })
-   
+
+		// get description
+		let descriptionHTMLs : string[] = []
+    for (let i = 0; i < titles.length-1; i++) {
+			console.log(`Getting description for ${titles[i]}`)
+			console.log(`Going to link ${links[i]}`)
+			await page.goto(links[i])
+			console.log(`Waiting for ${selectors.descriptionHTML}`)
+			await page.waitForSelector(selectors.descriptionHTML, {timeout: 0});
+
+			// get desc from page
+			let descSelector = await page.$$eval(selectors.descriptionHTML, (d) => d[0].innerHTML)
+			console.log(`descSelector = ${descSelector.slice(0,20)}`)
+			await descriptionHTMLs.push( 
+				await page.$$eval(selectors.descriptionHTML, (description) => {
+					let descHTML : String
+					description.forEach(item => {
+						descHTML = <string>descHTML + item.innerHTML
+					})
+					return <string>descHTML
+				}))
+			await page.goBack()
+		}
 
     let jobs: Jobs[] = []
 
@@ -101,7 +129,8 @@ async function getJobsFromSource ({
         'company': companies[i],
         'timePosted': timePosted[i],
         'link': links[i],
-        'source': source
+        'source': source,
+				'descriptionHTML': descriptionHTMLs[i]
       })
     }
 
@@ -111,7 +140,7 @@ async function getJobsFromSource ({
 			totalJobs.push(...jobs)
 		}
 
-		console.log(`- ${jobs.length} jobs added for page ${pages}`)
+		console.log(`${jobs.length} jobs added for page ${pages}`)
   }
 
   await browser.close()
